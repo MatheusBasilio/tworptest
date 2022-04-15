@@ -5,7 +5,7 @@ metadata:
   labels:
     app: echotest
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: echotest
@@ -16,22 +16,20 @@ spec:
     spec:
       containers:
       - name: test
-        image: matheusbasilio/tworptest:latest
-        ports:
-        - containerPort: 80
+        image: 616496521288.dkr.ecr.us-east-2.amazonaws.com/tworptest:latest
         env:
-          - name: TWORPTEST
-            value: "true100%"
+        - name: TWORPTEST
+          valueFrom:
+            secretKeyRef:
+              name: secret-echo-test
+              key: super_secret
+#     imagePullSecrets:
+#       name: awsecr-cred
 ---
 apiVersion: v1
-kind: Service
+kind: Secret
 metadata:
-  name: service-echo
-spec:
-  selector:
-    app: echotest
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 9376
----
+  name: secret-echo-test
+type: Opaque
+data:
+  super_secret: dHJ1ZTEwMCU=
